@@ -1,0 +1,20 @@
+{
+  "name": "j2v8-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "repository": "https://github.com/AeolusZane/jni-link-demo.git",
+  "author": "AeolusZane <1393649219@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "start":"./start -h"
+  },
+  "dependencies": {
+    "@darkobits/lolcatjs": "^3.1.5",
+    "commander": "^11.1.0",
+    "figlet": "^1.7.0",
+    "inquirer": "^9.2.13",
+    "ora": "^8.0.1",
+    "shelljs": "^0.8.5"
+  }
+}

@@ -1,0 +1,83 @@
+#!/usr/bin/env node
+// 这个js用来执行步骤
+import shell from 'shelljs';
+import figlet from 'figlet';
+
+const versionStr = figlet.textSync('Aeolus-Jzane');
+import { program } from 'commander';
+import inquirer from 'inquirer';
+import chalk from 'chalk';
+import ora from 'ora';
+const java_home = shell.exec('echo $JAVA_HOME', { silent: true }).stdout.trim();
+// 1. 执行命令
+
+program.version(versionStr, '-v, --version', '查看版本号');
+
+program.option('d', '清理lib、java jni文件');
+
+program.option('step1', '生成头文件[JT.class]');
+program.option('step2', '生成java字节码文件[JT.h]');
+program.option('step3', '生成静态链接库libwelcome.a');
+program.option('step4', '编译实现jni方法的demo.c');
+program.option('step5', '链接静态链接库（生成lib.so文件给java的jni调用使用）');
+program.option('step6', '执行java代码');
+
+const bindHandler = {
+    d() {
+        const spinner = ora('正在清理lib文件').start();
+        shell.rm('-rf', './lib/*');
+        spinner.succeed('清理完成');
+        const spinner1 = ora('正在清理java jni文件').start();
+        shell.rm('-rf', './JT.h');
+        shell.rm('-rf', './JT.class');
+        spinner1.succeed('清理完成');
+    },
+    step1() {
+        const spinner = ora('正在生成头文件[JT.class]').start();
+        shell.exec('javac JT.java');
+        spinner.succeed('生成完成');
+    },
+    step2() {
+        const spinner = ora('正在生成java字节码文件[JT.h]').start();
+        shell.exec('javah JT');
+        spinner.succeed('生成完成');
+    },
+    step3() {
+        const spinner = ora('正在生成静态链接库libwelcome.a').start();
+        shell.exec('gcc -Wall -O2 -fPIC -I./  -c -o ./lib/welcome.o welcome.c');
+        shell.exec('ar crv ./lib/libwelcome.a ./lib/welcome.o');
+        spinner.succeed('生成完成');
+    },
+    async step4() {
+        const spinner = ora('正在编译实现jni方法的demo.c').start();
+        const cmd = `gcc -Wall -O2 -fPIC -I ${java_home}/include/ -I ${java_home}/include/darwin/ -I./  -c -o ./lib/demo.o demo.c`;
+        shell.exec(cmd);
+        spinner.succeed('生成完成');
+    },
+    step5() {
+        const spinner = ora('正在链接静态链接库（生成lib.so文件给java的jni调用使用）').start();
+        shell.exec('gcc -shared ./lib/demo.o -L./lib -lwelcome -o ./lib/libdemo.so');
+        spinner.succeed('生成完成');
+    },
+    step6() {
+        const spinner = ora('正在执行java代码').start();
+        shell.exec('java -Djava.library.path=./ JT');
+        spinner.succeed('执行完成');
+    }
+
+}
+
+program.usage('<cmd> [env]')
+    .arguments('<cmd> [env]')
+    .action(function (cmd, otherParams) {
+        const handler = bindHandler[cmd];
+        if (handler) {
+            handler(otherParams);
+        } else {
+            // console.log('没有该命令哦🐷');
+            console.log(chalk.yellow('没有命令【' + chalk.red(cmd) + '】哦🐷'))
+        }
+    })
+program.parse(process.argv)
+
+

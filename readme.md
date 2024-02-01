@@ -1,3 +1,6 @@
+# jni调用.a静态库demo
+todo:js写下步骤的cli
+
 https://blog.csdn.net/ZC_25/article/details/123060979
 
 补充：链接jni.h的时候，java路径需要指定为本地的jdk路径。
@@ -7,10 +10,10 @@ https://blog.csdn.net/ZC_25/article/details/123060979
 可以把java的.class和.h也删掉
 
 ## 生成头文件[JT.class]
-javac JT.java
+javac -d ./target JT.java
 
 ## 生成java字节码文件[JT.h]
-javah JT
+javah -d ./target JT
 
 ## 生成静态链接库
 gcc -Wall -O2 -fPIC -I./  -c -o ./lib/welcome.o welcome.c

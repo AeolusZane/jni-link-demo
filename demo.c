@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include"JT.h"
+#include"./JT.h"
 #include"welcome.h"
 
 /*
