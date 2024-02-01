@@ -10,10 +10,10 @@ https://blog.csdn.net/ZC_25/article/details/123060979
 可以把java的.class和.h也删掉
 
 ## 生成头文件[JT.class]
-javac -d ./target JT.java
+javac JT.java
 
 ## 生成java字节码文件[JT.h]
-javah -d ./target JT
+javah JT
 
 ## 生成静态链接库
 gcc -Wall -O2 -fPIC -I./  -c -o ./lib/welcome.o welcome.c
